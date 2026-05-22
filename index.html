@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Compound Interest Calculator</title>
+    <!-- Theme initialisation: runs synchronously before any paint to prevent
+         flash of unstyled content (FOUC) when the user has a saved preference
+         or the OS is set to dark mode. -->
+    <script>
+      (function () {
+        try {
+          var stored = localStorage.getItem('alto-theme');
+          if (stored === 'dark' || stored === 'light') {
+            document.documentElement.setAttribute('data-theme', stored);
+          } else if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+            document.documentElement.setAttribute('data-theme', 'dark');
+          }
+        } catch (e) { /* Blocked by browser security policy — safe to ignore. */ }
+      })();
+    </script>
+    <meta name="description" content="Real-time compound interest calculator with growth visualization, multi-currency support, and detailed breakdowns." />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/index.jsx"></script>
+  </body>
+</html>

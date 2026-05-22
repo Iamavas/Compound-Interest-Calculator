@@ -1,0 +1,60 @@
+.wrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.symbol {
+  position: absolute;
+  left: 12px;
+  font-weight: 600;
+  font-size: 0.875rem;
+  color: var(--slate-400);
+  pointer-events: none;
+  user-select: none;
+  transition: color var(--transition);
+}
+
+.input {
+  width: 100%;
+  padding: 10px 12px 10px 30px;
+  border: 1.5px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  font-size: 0.94rem;
+  font-weight: 500;
+  color: var(--color-text);
+  background: var(--slate-50);
+  transition: border-color var(--transition), box-shadow var(--transition),
+    background var(--transition);
+  outline: none;
+}
+
+.input:hover:not(:focus) {
+  border-color: var(--slate-300);
+  background: #fff;
+}
+
+.input:focus {
+  border-color: var(--brand);
+  background: #fff;
+  box-shadow: var(--shadow-focus);
+}
+
+.wrap:focus-within .symbol {
+  color: var(--brand);
+}
+
+/* ── Dark mode ───────────────────────────────────────────── */
+:global([data-theme="dark"]) .input {
+  background: #0d1117;
+  border-color: rgba(255, 255, 255, 0.08);
+}
+
+:global([data-theme="dark"]) .input:hover:not(:focus) {
+  background: #161b22;
+  border-color: rgba(255, 255, 255, 0.14);
+}
+
+:global([data-theme="dark"]) .input:focus {
+  background: #161b22;
+}

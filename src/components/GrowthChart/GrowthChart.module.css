@@ -1,0 +1,107 @@
+/* ── Chart type toggle ─────────────────────────────── */
+.controls {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  margin-bottom: 14px;
+}
+
+.typeToggle {
+  display: flex;
+  background: var(--slate-100);
+  border: 1px solid var(--slate-200);
+  border-radius: var(--radius-pill);
+  padding: 3px;
+  gap: 2px;
+}
+
+.typeBtn {
+  padding: 5px 14px;
+  border: none;
+  border-radius: var(--radius-pill);
+  background: transparent;
+  cursor: pointer;
+  font-size: 0.77rem;
+  font-weight: 600;
+  color: var(--slate-500);
+  transition: all var(--transition);
+  white-space: nowrap;
+}
+
+.typeBtn:hover {
+  color: var(--color-text);
+}
+
+.typeBtn.active {
+  background: #fff;
+  color: var(--brand);
+  box-shadow: var(--shadow-sm);
+}
+
+/* ── Dark mode ───────────────────────────────────────────── */
+:global([data-theme="dark"]) .typeToggle {
+  background: rgba(0, 0, 0, 0.35);
+  border-color: rgba(255, 255, 255, 0.07);
+}
+
+:global([data-theme="dark"]) .typeBtn:hover {
+  color: #e2e8f0;
+}
+
+:global([data-theme="dark"]) .typeBtn.active {
+  background: rgba(129, 140, 248, 0.18);
+  color: #a5b4fc;
+  box-shadow: none;
+}
+
+/* ── Chart container ─────────────────────────────── */
+.chartContainer {
+  width: 100%;
+}
+
+/* ── Custom tooltip ─────────────────────────────── */
+.tooltip {
+  background: var(--slate-900);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-xl);
+  padding: 12px 16px;
+  min-width: 210px;
+}
+
+.tooltipTitle {
+  font-size: 0.78rem;
+  font-weight: 700;
+  margin-bottom: 10px;
+  color: rgba(255, 255, 255, 0.6);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.tooltipRow {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.82rem;
+  margin-bottom: 5px;
+}
+
+.tooltipRow:last-child { margin-bottom: 0; }
+
+.tooltipSwatch {
+  width: 8px;
+  height: 8px;
+  border-radius: 2px;
+  flex-shrink: 0;
+}
+
+.tooltipName {
+  flex: 1;
+  color: rgba(255, 255, 255, 0.55);
+}
+
+.tooltipVal {
+  font-weight: 700;
+  color: #fff;
+  letter-spacing: -0.01em;
+}

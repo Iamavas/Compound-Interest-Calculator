@@ -1,0 +1,105 @@
+.header {
+  /* Layered mesh gradient: deep navy base + indigo/violet radial glows */
+  background:
+    radial-gradient(ellipse 70% 90% at 0% 130%,  rgba(99,  102, 241, 0.35) 0%, transparent 60%),
+    radial-gradient(ellipse 50% 60% at 110% -10%, rgba(139,  92, 246, 0.22) 0%, transparent 60%),
+    radial-gradient(ellipse 40% 40% at 50%  -30%, rgba(99,  102, 241, 0.12) 0%, transparent 60%),
+    linear-gradient(145deg, #0a0f1e 0%, #13104a 50%, #312e81 100%);
+  color: #fff;
+  box-shadow:
+    0 1px 0 rgba(255, 255, 255, 0.05) inset,
+    0 4px 28px rgba(15, 23, 42, 0.35);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.inner {
+  max-width: 1320px;
+  margin: 0 auto;
+  padding: 15px 28px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.logoWrap {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+}
+
+.title {
+  font-size: 1.2rem;
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  line-height: 1.15;
+}
+
+.subtitle {
+  font-size: 0.74rem;
+  opacity: 0.55;
+  margin-top: 2px;
+  letter-spacing: 0.01em;
+  font-weight: 400;
+}
+
+.liveBadge {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  background: rgba(255, 255, 255, 0.07);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: var(--radius-pill);
+  padding: 5px 12px;
+  flex-shrink: 0;
+  backdrop-filter: blur(10px);
+  margin-left: auto;
+}
+
+.themeToggle {
+  flex-shrink: 0;
+  width: 34px;
+  height: 34px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: var(--radius-sm);
+  background: rgba(255, 255, 255, 0.07);
+  color: rgba(255, 255, 255, 0.75);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all var(--transition);
+  backdrop-filter: blur(10px);
+  margin-left: 8px;
+}
+
+.themeToggle:hover {
+  background: rgba(255, 255, 255, 0.14);
+  border-color: rgba(255, 255, 255, 0.22);
+  color: #fff;
+}
+
+.liveDot {
+  width: 6px;
+  height: 6px;
+  background: #4ade80;
+  border-radius: 50%;
+  box-shadow: 0 0 8px rgba(74, 222, 128, 0.8);
+  animation: pulse 2.5s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1;   transform: scale(1);    }
+  50%       { opacity: 0.4; transform: scale(0.65); }
+}
+
+@media (max-width: 640px) {
+  .inner    { padding: 13px 16px; }
+  .subtitle { display: none; }
+  .title    { font-size: 1rem; }
+}

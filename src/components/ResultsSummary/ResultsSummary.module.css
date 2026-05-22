@@ -1,0 +1,196 @@
+/* ─── Primary hero ──────────────────────────────────────── */
+.primaryHero {
+  background: linear-gradient(140deg, #1e1b4b 0%, #312e81 45%, #4f46e5 100%);
+  border-radius: var(--radius-lg);
+  padding: 22px 22px 18px;
+  margin-bottom: 10px;
+  color: #fff;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Decorative radial light-burst in the top-right corner */
+.primaryHero::after {
+  content: '';
+  position: absolute;
+  top: -40px;
+  right: -40px;
+  width: 160px;
+  height: 160px;
+  background: radial-gradient(circle, rgba(255,255,255,0.08) 0%, transparent 70%);
+  pointer-events: none;
+}
+
+.heroTopRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 8px;
+}
+
+.heroLabel {
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.09em;
+  opacity: 0.65;
+}
+
+.gainBadge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  background: rgba(74, 222, 128, 0.18);
+  border: 1px solid rgba(74, 222, 128, 0.35);
+  color: #86efac;
+  border-radius: var(--radius-pill);
+  padding: 3px 9px;
+  font-size: 0.71rem;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+  backdrop-filter: blur(4px);
+}
+
+.heroValue {
+  font-size: clamp(1.55rem, 2.8vw, 2.2rem);
+  font-weight: 800;
+  letter-spacing: -0.035em;
+  line-height: 1.1;
+}
+
+.heroPeriod {
+  font-size: 0.75rem;
+  opacity: 0.5;
+  margin-top: 6px;
+  font-weight: 400;
+}
+
+/* ─── Secondary row ─────────────────────────────────────── */
+.secondaryRow {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  margin-bottom: 14px;
+}
+
+.secondaryCard {
+  border-radius: var(--radius-md);
+  padding: 14px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  border: 1px solid transparent;
+  transition: transform var(--transition);
+}
+
+.secondaryCard:hover {
+  transform: translateY(-1px);
+}
+
+.secondaryCard[data-variant='interest'] {
+  background: var(--success-50);
+  border-color: rgba(16, 185, 129, 0.18);
+}
+
+.secondaryCard[data-variant='invested'] {
+  background: var(--slate-100);
+  border-color: var(--slate-200);
+}
+
+.secondaryLabel {
+  font-size: 0.68rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--slate-400);
+}
+
+.secondaryCard[data-variant='interest'] .secondaryLabel {
+  color: var(--success-600);
+}
+
+.secondaryValue {
+  font-size: 1.05rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: var(--color-text);
+}
+
+.secondaryCard[data-variant='interest'] .secondaryValue {
+  color: var(--success-700);
+}
+
+/* ─── Stats grid ────────────────────────────────────────── */
+.statsGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 6px;
+}
+
+@media (max-width: 480px) {
+  .statsGrid        { grid-template-columns: 1fr; }
+  .secondaryRow     { grid-template-columns: 1fr; }
+}
+
+.statItem {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 12px 10px 16px;
+  background: var(--slate-50);
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--slate-100);
+  position: relative;
+  overflow: hidden;
+  gap: 8px;
+  transition: background var(--transition);
+}
+
+.statItem:hover {
+  background: #fff;
+}
+
+/* Coloured left-border accent bar */
+.statItem::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 3px;
+}
+
+.statItem[data-accent='brand']::before   { background: var(--brand); }
+.statItem[data-accent='success']::before { background: var(--success); }
+.statItem[data-accent='warning']::before { background: var(--warning); }
+.statItem[data-accent='danger']::before  { background: var(--danger); }
+.statItem[data-accent='neutral']::before { background: var(--slate-300); }
+
+.statLabel {
+  font-size: 0.78rem;
+  color: var(--slate-500);
+  flex-shrink: 0;
+}
+
+.statValue {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--color-text);
+  text-align: right;
+  letter-spacing: -0.01em;
+}
+
+/* ── Dark mode ───────────────────────────────────────────── */
+:global([data-theme="dark"]) .secondaryCard[data-variant='invested'] {
+  background: rgba(255, 255, 255, 0.03);
+  border-color: rgba(255, 255, 255, 0.07);
+}
+
+:global([data-theme="dark"]) .statItem {
+  background: rgba(255, 255, 255, 0.03);
+  border-color: rgba(255, 255, 255, 0.06);
+}
+
+:global([data-theme="dark"]) .statItem:hover {
+  background: rgba(255, 255, 255, 0.06);
+}

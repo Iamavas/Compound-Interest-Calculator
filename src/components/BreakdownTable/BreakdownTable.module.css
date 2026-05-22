@@ -1,0 +1,153 @@
+/* ── Pill tabs ─────────────────────────────────────── */
+.tabs {
+  display: flex;
+  gap: 6px;
+  margin-bottom: 14px;
+}
+
+.tab {
+  padding: 6px 16px;
+  border: 1.5px solid var(--slate-200);
+  border-radius: var(--radius-pill);
+  background: transparent;
+  cursor: pointer;
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: var(--slate-500);
+  transition: all var(--transition);
+}
+
+.tab:hover {
+  border-color: var(--brand);
+  color: var(--brand);
+  background: var(--brand-50);
+}
+
+.tab.active {
+  background: var(--brand);
+  color: #fff;
+  border-color: var(--brand);
+  box-shadow: 0 2px 8px rgba(99, 102, 241, 0.3);
+}
+
+.tab:active { transform: scale(0.97); }
+
+/* ── Table wrapper ───────────────────────────────── */
+.tableWrap {
+  overflow-x: auto;
+  overflow-y: auto;
+  max-height: 460px;
+  border: 1px solid var(--slate-200);
+  border-radius: var(--radius-md);
+}
+
+/* ── Table ──────────────────────────────────────── */
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.8rem;
+}
+
+thead {
+  position: sticky;
+  top: 0;
+  z-index: 2;
+}
+
+th {
+  background: var(--slate-800);
+  color: rgba(255, 255, 255, 0.75);
+  padding: 10px 14px;
+  text-align: right;
+  font-weight: 600;
+  white-space: nowrap;
+  font-size: 0.68rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+th.center { text-align: center; }
+
+td {
+  padding: 8px 14px;
+  text-align: right;
+  border-bottom: 1px solid var(--slate-100);
+  white-space: nowrap;
+  transition: background var(--transition);
+}
+
+td.center {
+  text-align: center;
+  font-weight: 600;
+  color: var(--slate-400);
+  font-size: 0.76rem;
+}
+
+td.balanceCell {
+  font-weight: 700;
+  color: var(--success-600);
+}
+
+/* Zebra striping */
+tbody tr:nth-child(even) td {
+  background: var(--slate-50);
+}
+
+tr:hover td {
+  background: var(--color-row-hover) !important;
+}
+
+/* Year-start row in monthly table */
+tr.yearStart td {
+  border-top: 2px solid var(--brand-100);
+}
+
+.dash {
+  color: var(--slate-300);
+  font-size: 0.95em;
+}
+
+/* ── Dark mode ───────────────────────────────────────────── */
+/* :not(.active) prevents the dark override from beating .tab.active { color:#fff }
+   which shares equal specificity and would otherwise be overridden by source order */
+:global([data-theme="dark"]) .tab:not(.active) {
+  border-color: rgba(255, 255, 255, 0.18);
+  color: #cbd5e1;
+}
+
+:global([data-theme="dark"]) .tab:hover:not(.active) {
+  background: rgba(129, 140, 248, 0.14);
+  border-color: rgba(129, 140, 248, 0.5);
+  color: #818cf8;
+}
+
+/* Explicitly reinforce active tab text so it is always white on brand bg */
+:global([data-theme="dark"]) .tab.active {
+  color: #fff;
+  box-shadow: 0 2px 10px rgba(129, 140, 248, 0.5);
+}
+
+:global([data-theme="dark"]) .tableWrap {
+  border-color: rgba(255, 255, 255, 0.07);
+}
+
+:global([data-theme="dark"]) th {
+  background: #0a0f1e;
+  color: rgba(255, 255, 255, 0.55);
+}
+
+:global([data-theme="dark"]) td {
+  border-bottom-color: rgba(255, 255, 255, 0.04);
+}
+
+:global([data-theme="dark"]) tbody tr:nth-child(even) td {
+  background: rgba(255, 255, 255, 0.025);
+}
+
+:global([data-theme="dark"]) tr:hover td {
+  background: rgba(99, 102, 241, 0.08) !important;
+}
+
+:global([data-theme="dark"]) tr.yearStart td {
+  border-top-color: rgba(129, 140, 248, 0.25);
+}

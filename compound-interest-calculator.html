@@ -1,0 +1,996 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Compound Interest Calculator - Daily, Monthly, Yearly Compounding</title>
+<style>
+  :root {
+    --primary: #1a6b3c;
+    --primary-light: #e8f5ee;
+    --primary-dark: #0d4d2b;
+    --accent: #f4a623;
+    --bg: #f7f8fa;
+    --card: #ffffff;
+    --text: #1a1a2e;
+    --text-secondary: #5a5a7a;
+    --border: #e0e0e8;
+    --shadow: 0 2px 12px rgba(0,0,0,0.08);
+    --radius: 10px;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.6;
+  }
+
+  .header {
+    background: var(--primary);
+    color: white;
+    padding: 24px 0;
+    text-align: center;
+  }
+  .header h1 { font-size: 1.8rem; font-weight: 700; }
+  .header p { opacity: 0.85; font-size: 0.95rem; margin-top: 4px; }
+
+  .container {
+    max-width: 960px;
+    margin: 0 auto;
+    padding: 24px 16px;
+  }
+
+  .card {
+    background: var(--card);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    padding: 28px;
+    margin-bottom: 24px;
+  }
+
+  .card h2 {
+    font-size: 1.2rem;
+    color: var(--primary);
+    margin-bottom: 20px;
+    padding-bottom: 10px;
+    border-bottom: 2px solid var(--primary-light);
+  }
+
+  /* Currency selector */
+  .currency-selector {
+    display: flex;
+    gap: 6px;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+  }
+  .currency-btn {
+    padding: 8px 16px;
+    border: 2px solid var(--border);
+    border-radius: 8px;
+    background: white;
+    cursor: pointer;
+    font-size: 1rem;
+    font-weight: 600;
+    transition: all 0.2s;
+    color: var(--text-secondary);
+  }
+  .currency-btn:hover { border-color: var(--primary); color: var(--primary); }
+  .currency-btn.active {
+    background: var(--primary);
+    color: white;
+    border-color: var(--primary);
+  }
+
+  /* Form fields */
+  .form-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 18px;
+  }
+  @media (max-width: 600px) {
+    .form-grid { grid-template-columns: 1fr; }
+  }
+
+  .form-group { display: flex; flex-direction: column; }
+  .form-group.full-width { grid-column: 1 / -1; }
+
+  .form-group label {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--text-secondary);
+    margin-bottom: 6px;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+  }
+
+  .input-wrap {
+    position: relative;
+    display: flex;
+    align-items: center;
+  }
+  .input-prefix, .input-suffix {
+    position: absolute;
+    font-weight: 600;
+    color: var(--text-secondary);
+    font-size: 0.95rem;
+    pointer-events: none;
+  }
+  .input-prefix { left: 14px; }
+  .input-suffix { right: 14px; }
+
+  input[type="number"], input[type="text"], select {
+    width: 100%;
+    padding: 12px 14px;
+    border: 2px solid var(--border);
+    border-radius: 8px;
+    font-size: 1rem;
+    color: var(--text);
+    background: white;
+    transition: border-color 0.2s;
+    -moz-appearance: textfield;
+  }
+  input[type="number"]::-webkit-outer-spin-button,
+  input[type="number"]::-webkit-inner-spin-button { -webkit-appearance: none; }
+  input[type="number"]:focus, input[type="text"]:focus, select:focus {
+    outline: none;
+    border-color: var(--primary);
+  }
+  .has-prefix input { padding-left: 34px; }
+  .has-suffix input { padding-right: 34px; }
+
+  select {
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%235a5a7a' d='M6 8L1 3h10z'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 14px center;
+    padding-right: 36px;
+    cursor: pointer;
+  }
+
+  /* Contributions toggle */
+  .contrib-toggle {
+    display: flex;
+    gap: 0;
+    border: 2px solid var(--border);
+    border-radius: 8px;
+    overflow: hidden;
+    margin-bottom: 16px;
+  }
+  .contrib-toggle button {
+    flex: 1;
+    padding: 10px;
+    border: none;
+    background: white;
+    cursor: pointer;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--text-secondary);
+    transition: all 0.2s;
+  }
+  .contrib-toggle button.active {
+    background: var(--primary);
+    color: white;
+  }
+  .contrib-toggle button:not(:last-child) { border-right: 2px solid var(--border); }
+
+  /* Calculate button */
+  .btn-calculate {
+    display: block;
+    width: 100%;
+    padding: 16px;
+    background: var(--primary);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 1.1rem;
+    font-weight: 700;
+    cursor: pointer;
+    margin-top: 24px;
+    transition: background 0.2s;
+  }
+  .btn-calculate:hover { background: var(--primary-dark); }
+
+  /* Results */
+  #results { display: none; }
+
+  .results-hero {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 16px;
+    margin-bottom: 24px;
+  }
+  @media (max-width: 600px) {
+    .results-hero { grid-template-columns: 1fr; }
+  }
+
+  .result-card {
+    background: var(--primary-light);
+    border-radius: var(--radius);
+    padding: 20px;
+    text-align: center;
+  }
+  .result-card.highlight {
+    background: var(--primary);
+    color: white;
+  }
+  .result-card .label {
+    font-size: 0.8rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    opacity: 0.8;
+    margin-bottom: 6px;
+  }
+  .result-card .value {
+    font-size: 1.5rem;
+    font-weight: 800;
+  }
+
+  .stats-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin-bottom: 24px;
+  }
+  @media (max-width: 600px) {
+    .stats-grid { grid-template-columns: 1fr; }
+  }
+  .stat-item {
+    display: flex;
+    justify-content: space-between;
+    padding: 12px 16px;
+    background: #f9f9fb;
+    border-radius: 8px;
+    font-size: 0.9rem;
+  }
+  .stat-item .stat-label { color: var(--text-secondary); }
+  .stat-item .stat-value { font-weight: 700; }
+
+  /* Chart */
+  .chart-container {
+    position: relative;
+    width: 100%;
+    height: 350px;
+    margin: 20px 0;
+  }
+  canvas { width: 100% !important; }
+
+  /* Tables */
+  .table-tabs {
+    display: flex;
+    gap: 0;
+    margin-bottom: 0;
+  }
+  .table-tab {
+    padding: 10px 20px;
+    border: 2px solid var(--border);
+    border-bottom: none;
+    background: #f9f9fb;
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+    border-radius: 8px 8px 0 0;
+    margin-right: -2px;
+  }
+  .table-tab.active {
+    background: white;
+    color: var(--primary);
+    border-color: var(--primary);
+    position: relative;
+    z-index: 1;
+  }
+
+  .table-wrapper {
+    overflow-x: auto;
+    border: 2px solid var(--border);
+    border-radius: 0 8px 8px 8px;
+    max-height: 500px;
+    overflow-y: auto;
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.85rem;
+  }
+  thead { position: sticky; top: 0; z-index: 2; }
+  th {
+    background: var(--primary);
+    color: white;
+    padding: 12px 14px;
+    text-align: right;
+    font-weight: 600;
+    white-space: nowrap;
+  }
+  th:first-child { text-align: center; }
+  td {
+    padding: 10px 14px;
+    text-align: right;
+    border-bottom: 1px solid var(--border);
+  }
+  td:first-child { text-align: center; font-weight: 600; color: var(--text-secondary); }
+  tr:hover td { background: var(--primary-light); }
+  tr.year-start td { border-top: 2px solid var(--primary); }
+
+  .disclaimer {
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+    margin-top: 20px;
+    padding: 14px;
+    background: #fff8e8;
+    border-radius: 8px;
+    border-left: 4px solid var(--accent);
+  }
+
+  /* Deposit timing radio */
+  .radio-group {
+    display: flex;
+    gap: 16px;
+    align-items: center;
+    padding: 8px 0;
+  }
+  .radio-group label {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: var(--text);
+    cursor: pointer;
+    text-transform: none;
+    letter-spacing: 0;
+  }
+  .radio-group input[type="radio"] { width: auto; accent-color: var(--primary); }
+
+  .hidden { display: none !important; }
+
+  .info-text {
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+    margin-top: 4px;
+    font-style: italic;
+  }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1>Compound Interest Calculator</h1>
+  <p>See how your savings or investments grow over time with compound interest</p>
+</div>
+
+<div class="container">
+
+  <!-- Calculator Form -->
+  <div class="card">
+    <h2>Investment Details</h2>
+
+    <div class="currency-selector" id="currencySelector">
+      <button class="currency-btn active" data-symbol="₦" data-code="NGN">₦ NGN</button>
+      <button class="currency-btn" data-symbol="$" data-code="USD">$ USD</button>
+      <button class="currency-btn" data-symbol="€" data-code="EUR">€ EUR</button>
+      <button class="currency-btn" data-symbol="£" data-code="GBP">£ GBP</button>
+      <button class="currency-btn" data-symbol="₹" data-code="INR">₹ INR</button>
+      <button class="currency-btn" data-symbol="¥" data-code="JPY">¥ JPY</button>
+    </div>
+
+    <div class="form-grid">
+      <div class="form-group">
+        <label>Initial Investment</label>
+        <div class="input-wrap has-prefix">
+          <span class="input-prefix" id="prefixSymbol">₦</span>
+          <input type="text" id="principal" value="1,000,000" class="money-input" inputmode="numeric">
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label>Annual Interest Rate</label>
+        <div class="input-wrap has-suffix">
+          <input type="number" id="rate" value="15" min="0" max="100" step="0.1">
+          <span class="input-suffix">%</span>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label>Compound Frequency</label>
+        <select id="compoundFreq">
+          <option value="365">Daily (365/yr)</option>
+          <option value="360">Daily (360/yr)</option>
+          <option value="52">Weekly (52/yr)</option>
+          <option value="26">Bi-Weekly (26/yr)</option>
+          <option value="24">Semi-Monthly (24/yr)</option>
+          <option value="12" selected>Monthly (12/yr)</option>
+          <option value="6">Bi-Monthly (6/yr)</option>
+          <option value="4">Quarterly (4/yr)</option>
+          <option value="2">Half-Yearly (2/yr)</option>
+          <option value="1">Yearly (1/yr)</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label>Interest Rate Frequency</label>
+        <select id="rateFreq">
+          <option value="daily">Daily</option>
+          <option value="weekly">Weekly</option>
+          <option value="monthly">Monthly</option>
+          <option value="quarterly">Quarterly</option>
+          <option value="annual" selected>Annual</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label>Years</label>
+        <input type="number" id="years" value="5" min="0" max="100" step="1">
+      </div>
+
+      <div class="form-group">
+        <label>Months</label>
+        <input type="number" id="months" value="0" min="0" max="11" step="1">
+      </div>
+    </div>
+  </div>
+
+  <!-- Contributions -->
+  <div class="card">
+    <h2>Regular Contributions</h2>
+    <div class="contrib-toggle" id="contribToggle">
+      <button class="active" data-mode="none">None</button>
+      <button data-mode="deposits">Deposits</button>
+      <button data-mode="withdrawals">Withdrawals</button>
+      <button data-mode="both">Both</button>
+    </div>
+
+    <div id="depositSection" class="hidden">
+      <div class="form-grid">
+        <div class="form-group">
+          <label>Deposit Amount</label>
+          <div class="input-wrap has-prefix">
+            <span class="input-prefix dep-symbol">₦</span>
+            <input type="text" id="depositAmount" value="50,000" class="money-input" inputmode="numeric">
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Deposit Frequency</label>
+          <select id="depositFreq">
+            <option value="weekly">Weekly</option>
+            <option value="biweekly">Bi-Weekly</option>
+            <option value="monthly" selected>Monthly</option>
+            <option value="quarterly">Quarterly</option>
+            <option value="halfyearly">Half-Yearly</option>
+            <option value="yearly">Yearly</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Annual Deposit Increase</label>
+          <div class="input-wrap has-suffix">
+            <input type="number" id="depositIncrease" value="0" min="0" step="0.5">
+            <span class="input-suffix">%</span>
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Deposits Made At</label>
+          <div class="radio-group">
+            <label><input type="radio" name="depositTiming" value="beginning"> Beginning</label>
+            <label><input type="radio" name="depositTiming" value="end" checked> End</label>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div id="withdrawalSection" class="hidden">
+      <div class="form-grid" style="margin-top:16px;">
+        <div class="form-group">
+          <label>Withdrawal Amount</label>
+          <div class="input-wrap has-prefix">
+            <span class="input-prefix wd-symbol">₦</span>
+            <input type="text" id="withdrawalAmount" value="20,000" class="money-input" inputmode="numeric">
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Withdrawal Frequency</label>
+          <select id="withdrawalFreq">
+            <option value="monthly" selected>Monthly</option>
+            <option value="quarterly">Quarterly</option>
+            <option value="halfyearly">Half-Yearly</option>
+            <option value="yearly">Yearly</option>
+          </select>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <button class="btn-calculate" onclick="calculate()">Calculate</button>
+
+  <!-- Results -->
+  <div id="results">
+    <div class="card">
+      <h2 id="resultsTitle">Interest Calculation Results</h2>
+
+      <div class="results-hero">
+        <div class="result-card highlight">
+          <div class="label">Future Value</div>
+          <div class="value" id="futureValue">-</div>
+        </div>
+        <div class="result-card">
+          <div class="label">Total Interest</div>
+          <div class="value" id="totalInterest">-</div>
+        </div>
+        <div class="result-card">
+          <div class="label">Initial Balance</div>
+          <div class="value" id="initialBalance">-</div>
+        </div>
+      </div>
+
+      <div class="stats-grid">
+        <div class="stat-item">
+          <span class="stat-label">Nominal Rate</span>
+          <span class="stat-value" id="nominalRate">-</span>
+        </div>
+        <div class="stat-item">
+          <span class="stat-label">Effective Annual Rate (APY)</span>
+          <span class="stat-value" id="effectiveRate">-</span>
+        </div>
+        <div class="stat-item">
+          <span class="stat-label">Total Deposits</span>
+          <span class="stat-value" id="totalDeposits">-</span>
+        </div>
+        <div class="stat-item">
+          <span class="stat-label">Total Withdrawals</span>
+          <span class="stat-value" id="totalWithdrawals">-</span>
+        </div>
+        <div class="stat-item">
+          <span class="stat-label">Rate of Return (RoR)</span>
+          <span class="stat-value" id="ror">-</span>
+        </div>
+        <div class="stat-item">
+          <span class="stat-label">Time to Double</span>
+          <span class="stat-value" id="doubleTime">-</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Chart -->
+    <div class="card">
+      <h2>Growth Over Time</h2>
+      <div class="chart-container">
+        <canvas id="growthChart"></canvas>
+      </div>
+    </div>
+
+    <!-- Breakdown Tables -->
+    <div class="card">
+      <div class="table-tabs">
+        <button class="table-tab active" onclick="showTable('monthly')">Monthly Breakdown</button>
+        <button class="table-tab" onclick="showTable('yearly')">Yearly Breakdown</button>
+      </div>
+      <div class="table-wrapper" id="monthlyTable"></div>
+      <div class="table-wrapper hidden" id="yearlyTable"></div>
+    </div>
+
+    <div class="disclaimer">
+      <strong>Disclaimer:</strong> This calculator is for illustrative purposes only and does not constitute financial advice.
+      Actual returns may vary based on market conditions, fees, and other factors. Consult a qualified financial advisor for personalised advice.
+    </div>
+  </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<script>
+// --- State ---
+let currencySymbol = '₦';
+let chartInstance = null;
+
+// --- Currency selector ---
+document.getElementById('currencySelector').addEventListener('click', e => {
+  const btn = e.target.closest('.currency-btn');
+  if (!btn) return;
+  document.querySelectorAll('.currency-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  currencySymbol = btn.dataset.symbol;
+  document.getElementById('prefixSymbol').textContent = currencySymbol;
+  document.querySelectorAll('.dep-symbol, .wd-symbol').forEach(el => el.textContent = currencySymbol);
+});
+
+// --- Money input formatting (live commas) ---
+function formatWithCommas(value) {
+  // Strip everything except digits and decimal point
+  let cleaned = value.replace(/[^0-9.]/g, '');
+  // Split on decimal
+  let parts = cleaned.split('.');
+  // Format integer part with commas
+  parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+  return parts.length > 1 ? parts[0] + '.' + parts[1] : parts[0];
+}
+
+function parseMoneyValue(id) {
+  const raw = document.getElementById(id).value;
+  return parseFloat(raw.replace(/,/g, '')) || 0;
+}
+
+document.querySelectorAll('.money-input').forEach(input => {
+  input.addEventListener('input', function() {
+    const cursorPos = this.selectionStart;
+    const oldLen = this.value.length;
+    const oldCommasBefore = (this.value.substring(0, cursorPos).match(/,/g) || []).length;
+
+    this.value = formatWithCommas(this.value);
+
+    const newLen = this.value.length;
+    const newCommasBefore = (this.value.substring(0, cursorPos + (newLen - oldLen)).match(/,/g) || []).length;
+    const newCursor = cursorPos + (newCommasBefore - oldCommasBefore);
+    this.setSelectionRange(newCursor, newCursor);
+  });
+});
+
+// --- Contribution toggle ---
+document.getElementById('contribToggle').addEventListener('click', e => {
+  const btn = e.target.closest('button');
+  if (!btn) return;
+  document.querySelectorAll('#contribToggle button').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  const mode = btn.dataset.mode;
+  document.getElementById('depositSection').classList.toggle('hidden', mode === 'none' && mode !== 'both');
+  document.getElementById('withdrawalSection').classList.toggle('hidden', mode === 'none' && mode !== 'both');
+
+  if (mode === 'deposits') {
+    document.getElementById('depositSection').classList.remove('hidden');
+    document.getElementById('withdrawalSection').classList.add('hidden');
+  } else if (mode === 'withdrawals') {
+    document.getElementById('depositSection').classList.add('hidden');
+    document.getElementById('withdrawalSection').classList.remove('hidden');
+  } else if (mode === 'both') {
+    document.getElementById('depositSection').classList.remove('hidden');
+    document.getElementById('withdrawalSection').classList.remove('hidden');
+  } else {
+    document.getElementById('depositSection').classList.add('hidden');
+    document.getElementById('withdrawalSection').classList.add('hidden');
+  }
+});
+
+// --- Table tabs ---
+function showTable(type) {
+  document.querySelectorAll('.table-tab').forEach(t => t.classList.remove('active'));
+  document.getElementById('monthlyTable').classList.toggle('hidden', type !== 'monthly');
+  document.getElementById('yearlyTable').classList.toggle('hidden', type !== 'yearly');
+  event.target.classList.add('active');
+}
+
+// --- Helpers ---
+function fmt(n) {
+  return currencySymbol + Number(n).toLocaleString('en-NG', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+}
+
+function getDepositFreqPerYear(freq) {
+  const map = { weekly: 52, biweekly: 26, monthly: 12, quarterly: 4, halfyearly: 2, yearly: 1 };
+  return map[freq] || 12;
+}
+
+function getAnnualRate(rate, freq) {
+  // Convert the entered rate to annual
+  switch (freq) {
+    case 'daily': return rate * 365;
+    case 'weekly': return rate * 52;
+    case 'monthly': return rate * 12;
+    case 'quarterly': return rate * 4;
+    case 'annual': default: return rate;
+  }
+}
+
+// --- Main Calculation ---
+function calculate() {
+  const P = parseMoneyValue('principal');
+  const rateInput = parseFloat(document.getElementById('rate').value) || 0;
+  const rateFreq = document.getElementById('rateFreq').value;
+  const n = parseInt(document.getElementById('compoundFreq').value);
+  const years = parseInt(document.getElementById('years').value) || 0;
+  const extraMonths = parseInt(document.getElementById('months').value) || 0;
+  const totalMonths = years * 12 + extraMonths;
+
+  if (totalMonths === 0) { alert('Please enter a time period.'); return; }
+
+  const annualRate = getAnnualRate(rateInput, rateFreq) / 100;
+  const ratePerPeriod = annualRate / n;
+
+  // Contribution mode
+  const contribMode = document.querySelector('#contribToggle button.active').dataset.mode;
+  const depositAmt = (contribMode === 'deposits' || contribMode === 'both') ? parseMoneyValue('depositAmount') : 0;
+  const depositFreq = document.getElementById('depositFreq').value;
+  const depositIncPct = parseFloat(document.getElementById('depositIncrease').value) || 0;
+  const depositTiming = document.querySelector('input[name="depositTiming"]:checked').value;
+  const depositsPerYear = getDepositFreqPerYear(depositFreq);
+
+  const withdrawalAmt = (contribMode === 'withdrawals' || contribMode === 'both') ? parseMoneyValue('withdrawalAmount') : 0;
+  const withdrawalFreq = document.getElementById('withdrawalFreq').value;
+  const withdrawalsPerYear = getDepositFreqPerYear(withdrawalFreq);
+
+  // Simulate month by month
+  let balance = P;
+  let totalInterestAccrued = 0;
+  let totalDeposited = 0;
+  let totalWithdrawn = 0;
+  const monthlyData = [];
+  const yearlyData = [];
+
+  // Period 0
+  monthlyData.push({
+    month: 0, deposit: P, withdrawal: 0, interest: 0,
+    totalDeposits: P, accruedInterest: 0, balance: P
+  });
+
+  let currentDepositAmt = depositAmt;
+
+  for (let m = 1; m <= totalMonths; m++) {
+    const currentYear = Math.ceil(m / 12);
+
+    // Annual deposit increase at the start of each new year
+    if (m > 1 && (m - 1) % 12 === 0 && depositIncPct > 0) {
+      currentDepositAmt *= (1 + depositIncPct / 100);
+    }
+
+    // Determine deposit for this month
+    let depThisMonth = 0;
+    if (depositAmt > 0) {
+      // Does a deposit happen this month?
+      const monthsPerDeposit = 12 / depositsPerYear;
+      if (m % Math.round(monthsPerDeposit) === 0 || depositsPerYear >= 12) {
+        if (depositsPerYear >= 12) {
+          depThisMonth = currentDepositAmt;
+        } else if (depositsPerYear === 4 && m % 3 === 0) {
+          depThisMonth = currentDepositAmt;
+        } else if (depositsPerYear === 2 && m % 6 === 0) {
+          depThisMonth = currentDepositAmt;
+        } else if (depositsPerYear === 1 && m % 12 === 0) {
+          depThisMonth = currentDepositAmt;
+        } else if (depositsPerYear >= 24) {
+          depThisMonth = currentDepositAmt;
+        } else if (depositsPerYear === 26) {
+          depThisMonth = currentDepositAmt * 26 / 12; // approximate
+        } else if (depositsPerYear === 52) {
+          depThisMonth = currentDepositAmt * 52 / 12; // approximate monthly equivalent
+        } else {
+          depThisMonth = currentDepositAmt;
+        }
+      }
+    }
+    // Simplify: convert deposit to monthly equivalent for all frequencies
+    depThisMonth = currentDepositAmt * depositsPerYear / 12;
+
+    // Determine withdrawal this month
+    let wdThisMonth = 0;
+    if (withdrawalAmt > 0) {
+      wdThisMonth = withdrawalAmt * withdrawalsPerYear / 12;
+    }
+
+    // Beginning-of-period deposit
+    if (depositTiming === 'beginning') {
+      balance += depThisMonth;
+    }
+
+    // Calculate interest for this month
+    // Monthly interest from the compound frequency
+    const monthlyCompoundRate = Math.pow(1 + ratePerPeriod, n / 12) - 1;
+    const interestThisMonth = balance * monthlyCompoundRate;
+
+    balance += interestThisMonth;
+    totalInterestAccrued += interestThisMonth;
+
+    // End-of-period deposit
+    if (depositTiming === 'end') {
+      balance += depThisMonth;
+    }
+
+    // Withdrawal
+    balance -= wdThisMonth;
+    if (balance < 0) balance = 0;
+
+    totalDeposited += depThisMonth;
+    totalWithdrawn += wdThisMonth;
+
+    monthlyData.push({
+      month: m,
+      deposit: depThisMonth,
+      withdrawal: wdThisMonth,
+      interest: interestThisMonth,
+      totalDeposits: P + totalDeposited,
+      accruedInterest: totalInterestAccrued,
+      balance: balance
+    });
+  }
+
+  // Build yearly data
+  for (let y = 0; y <= Math.ceil(totalMonths / 12); y++) {
+    const mIdx = Math.min(y * 12, totalMonths);
+    const d = monthlyData[mIdx];
+    if (!d) break;
+
+    let yearInterest = 0;
+    let yearDeposits = 0;
+    let yearWithdrawals = 0;
+    if (y > 0) {
+      const start = (y - 1) * 12 + 1;
+      const end = Math.min(y * 12, totalMonths);
+      for (let i = start; i <= end; i++) {
+        yearInterest += monthlyData[i].interest;
+        yearDeposits += monthlyData[i].deposit;
+        yearWithdrawals += monthlyData[i].withdrawal;
+      }
+    }
+
+    yearlyData.push({
+      year: y,
+      deposits: y === 0 ? P : yearDeposits,
+      withdrawals: yearWithdrawals,
+      interest: yearInterest,
+      totalDeposits: d.totalDeposits,
+      accruedInterest: d.accruedInterest,
+      balance: d.balance
+    });
+  }
+
+  // --- Populate Results ---
+  document.getElementById('results').style.display = 'block';
+
+  const totalYears = years + extraMonths / 12;
+  const timeLabel = years > 0 && extraMonths > 0
+    ? `${years} year${years>1?'s':''} and ${extraMonths} month${extraMonths>1?'s':''}`
+    : years > 0 ? `${years} year${years>1?'s':''}` : `${extraMonths} month${extraMonths>1?'s':''}`;
+
+  document.getElementById('resultsTitle').textContent = `Interest Calculation for ${timeLabel}`;
+  document.getElementById('futureValue').textContent = fmt(balance);
+  document.getElementById('totalInterest').textContent = fmt(totalInterestAccrued);
+  document.getElementById('initialBalance').textContent = fmt(P);
+
+  const nomRate = annualRate * 100;
+  const effectiveAnnual = (Math.pow(1 + annualRate / n, n) - 1) * 100;
+  document.getElementById('nominalRate').textContent = nomRate.toFixed(2) + '%';
+  document.getElementById('effectiveRate').textContent = effectiveAnnual.toFixed(2) + '%';
+  document.getElementById('totalDeposits').textContent = fmt(totalDeposited);
+  document.getElementById('totalWithdrawals').textContent = fmt(totalWithdrawn);
+
+  const rorVal = P > 0 ? ((balance - P - totalDeposited + totalWithdrawn) / P * 100) : 0;
+  document.getElementById('ror').textContent = rorVal.toFixed(2) + '%';
+
+  // Time to double (Rule of 72 approximation then exact)
+  if (annualRate > 0) {
+    const doublingYears = Math.log(2) / (n * Math.log(1 + annualRate / n));
+    const dYears = Math.floor(doublingYears);
+    const dMonths = Math.round((doublingYears - dYears) * 12);
+    document.getElementById('doubleTime').textContent = `${dYears} year${dYears!==1?'s':''}, ${dMonths} month${dMonths!==1?'s':''}`;
+  } else {
+    document.getElementById('doubleTime').textContent = 'N/A';
+  }
+
+  // --- Chart ---
+  renderChart(yearlyData);
+
+  // --- Tables ---
+  renderMonthlyTable(monthlyData);
+  renderYearlyTable(yearlyData);
+
+  // Scroll to results
+  document.getElementById('results').scrollIntoView({ behavior: 'smooth' });
+}
+
+function renderChart(yearlyData) {
+  const ctx = document.getElementById('growthChart').getContext('2d');
+  if (chartInstance) chartInstance.destroy();
+
+  const labels = yearlyData.map(d => d.year === 0 ? 'Start' : `Year ${d.year}`);
+  const balances = yearlyData.map(d => d.balance);
+  const deposits = yearlyData.map(d => d.totalDeposits);
+  const interests = yearlyData.map(d => d.accruedInterest);
+
+  chartInstance = new Chart(ctx, {
+    type: 'bar',
+    data: {
+      labels,
+      datasets: [
+        {
+          label: 'Total Deposits',
+          data: deposits,
+          backgroundColor: '#1a6b3c',
+          borderRadius: 4,
+          order: 2
+        },
+        {
+          label: 'Interest Earned',
+          data: interests,
+          backgroundColor: '#f4a623',
+          borderRadius: 4,
+          order: 1
+        },
+        {
+          label: 'Balance',
+          data: balances,
+          type: 'line',
+          borderColor: '#1a1a2e',
+          backgroundColor: 'transparent',
+          borderWidth: 2.5,
+          pointRadius: 3,
+          pointBackgroundColor: '#1a1a2e',
+          tension: 0.3,
+          order: 0
+        }
+      ]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      interaction: { mode: 'index', intersect: false },
+      plugins: {
+        tooltip: {
+          callbacks: {
+            label: ctx => `${ctx.dataset.label}: ${currencySymbol}${ctx.parsed.y.toLocaleString('en-NG', {minimumFractionDigits:2, maximumFractionDigits:2})}`
+          }
+        },
+        legend: { position: 'bottom' }
+      },
+      scales: {
+        x: { stacked: true, grid: { display: false } },
+        y: {
+          stacked: false,
+          ticks: {
+            callback: v => currencySymbol + (v >= 1000000 ? (v/1000000).toFixed(1)+'M' : v >= 1000 ? (v/1000).toFixed(0)+'K' : v)
+          }
+        }
+      }
+    }
+  });
+}
+
+function renderMonthlyTable(data) {
+  let html = `<table>
+    <thead><tr>
+      <th>Month</th><th>Deposits</th><th>Withdrawals</th><th>Interest</th>
+      <th>Total Deposits</th><th>Accrued Interest</th><th>Balance</th>
+    </tr></thead><tbody>`;
+
+  data.forEach(d => {
+    const isYearStart = d.month > 0 && d.month % 12 === 1;
+    html += `<tr${isYearStart ? ' class="year-start"' : ''}>
+      <td>${d.month}</td>
+      <td>${d.month === 0 ? fmt(d.deposit) : d.deposit > 0 ? fmt(d.deposit) : '–'}</td>
+      <td>${d.withdrawal > 0 ? fmt(d.withdrawal) : '–'}</td>
+      <td>${d.month === 0 ? '–' : fmt(d.interest)}</td>
+      <td>${fmt(d.totalDeposits)}</td>
+      <td>${d.month === 0 ? '–' : fmt(d.accruedInterest)}</td>
+      <td>${fmt(d.balance)}</td>
+    </tr>`;
+  });
+
+  html += '</tbody></table>';
+  document.getElementById('monthlyTable').innerHTML = html;
+}
+
+function renderYearlyTable(data) {
+  let html = `<table>
+    <thead><tr>
+      <th>Year</th><th>Deposits</th><th>Withdrawals</th><th>Interest</th>
+      <th>Total Deposits</th><th>Accrued Interest</th><th>Balance</th>
+    </tr></thead><tbody>`;
+
+  data.forEach(d => {
+    html += `<tr>
+      <td>${d.year}</td>
+      <td>${d.deposits > 0 ? fmt(d.deposits) : '–'}</td>
+      <td>${d.withdrawals > 0 ? fmt(d.withdrawals) : '–'}</td>
+      <td>${d.year === 0 ? '–' : fmt(d.interest)}</td>
+      <td>${fmt(d.totalDeposits)}</td>
+      <td>${d.year === 0 ? '–' : fmt(d.accruedInterest)}</td>
+      <td>${fmt(d.balance)}</td>
+    </tr>`;
+  });
+
+  html += '</tbody></table>';
+  document.getElementById('yearlyTable').innerHTML = html;
+}
+
+// Auto-calculate on load
+window.addEventListener('DOMContentLoaded', calculate);
+</script>
+</body>
+</html>
